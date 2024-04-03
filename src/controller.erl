@@ -256,6 +256,7 @@ handle_call(UnMatchedSignal, From, State) ->
 
 
 handle_cast({reconciliate}, State) ->
+    timer:sleep(10*1000),
     spawn(fun()->lib_reconciliate:start() end),
     {noreply, State};
 
