@@ -35,12 +35,12 @@
 %% @end
 %%--------------------------------------------------------------------
 start()->
-    io:format("not implemented ~p~n",[{"lib_controller:connect_to_other_hosts()",?MODULE,?LINE}]),
+    timer:sleep(?ReconciliationInterval),
     ApplicationFileNamesToStart=applications_to_start(),
     start_applications(ApplicationFileNamesToStart),
     ApplicationFileNamesToStop=applications_to_stop(),
     stop_applications(ApplicationFileNamesToStop),
-    timer:sleep(?ReconciliationInterval),
+    
     rpc:cast(node(),controller,reconciliate,[]).
    
 
