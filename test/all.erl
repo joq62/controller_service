@@ -72,9 +72,14 @@ setup()->
     io:format("Start ~p~n",[{?MODULE,?FUNCTION_NAME}]),
 
     file:del_dir_r(?MainLogDir),
-    file:make_dir(?MainLogDir), 
+  
 
     {ok,_}=log:start_link(),
+    file:make_dir(?MainLogDir),
+    [NodeName,_HostName]=string:tokens(atom_to_list(node()),"@"),
+    NodeNodeLogDir=filename:join(?MainLogDir,NodeName),
+    ok=log:create_logger(NodeNodeLogDir,?LocalLogDir,?LogFile,?MaxNumFiles,?MaxNumBytes),
+    
     {ok,_}=rd:start_link(),
     {ok,_}=git_handler:start_link(),
     {ok,_}=catalog:start_link(),

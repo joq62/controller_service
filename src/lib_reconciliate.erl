@@ -35,13 +35,13 @@
 %% @end
 %%--------------------------------------------------------------------
 start()->
-    ?LOG_NOTICE("********************* ",["*************************************"]),
+    io:format(" START Reconcilaition ******************** ~p~n",[{?ReconciliationInterval,?MODULE,?FUNCTION_NAME,?LINE}]),
     timer:sleep(?ReconciliationInterval),
     ApplicationFileNamesToStart=applications_to_start(),
     start_applications(ApplicationFileNamesToStart),
     ApplicationFileNamesToStop=applications_to_stop(),
     stop_applications(ApplicationFileNamesToStop),
-    
+     io:format(" END Reconcilaition ========================== ~p~n",[{?MODULE,?FUNCTION_NAME,?LINE}]),
     rpc:cast(node(),controller,reconciliate,[]).
    
 
@@ -50,9 +50,11 @@ start_applications([])->
 start_applications([ApplicationFileName|T])->
     case rpc:call(node(),lib_controller,load_start,[ApplicationFileName],3*5000) of
 	{ok,_}->
-	     ?LOG_NOTICE("Started application with filename ",[ApplicationFileName]);
+	    io:format("Started application  ~p~n",[{ApplicationFileName,?MODULE,?FUNCTION_NAME,?LINE}]);
+	   %  ?LOG_NOTICE("Started applicationv ",[ApplicationFileName]);
 	Error->
-	    ?LOG_WARNING("Failed to start application with filename ",[ApplicationFileName,Error])
+	    io:format("Failed to start application  ~p~n",[{ApplicationFileName,Error,?MODULE,?FUNCTION_NAME,?LINE}])
+	   % ?LOG_WARNING("Failed to start application with filename ",[ApplicationFileName,Error])
     end,
     timer:sleep(1000),
     start_applications(T).
@@ -61,7 +63,8 @@ stop_applications([])->
     ok;
 stop_applications([{WorkerNode,ApplicationFileName}|T])->
     lib_controller:stop_unload(WorkerNode,ApplicationFileName),
-    ?LOG_NOTICE("Stopped application with filename on Node ",[ApplicationFileName,WorkerNode]),
+    io:format("Stopped application  ~p~n",[{ApplicationFileName,WorkerNode,?MODULE,?FUNCTION_NAME,?LINE}]),
+  %  ?LOG_NOTICE("Stopped application with filename on Node ",[ApplicationFileName,WorkerNode]),
     timer:sleep(1000),
     stop_applications(T).
   
@@ -176,7 +179,7 @@ check_apps([{App,_,_}|T],WorkerNode,AllApps,Acc)->
 		   Acc;
 	       true ->
 		   {ok,FileName}=catalog:which_filename(App),
-		   ?LOG_NOTICE("which_filename(App)  ",[App,FileName,WorkerNode]),
+		  % ?LOG_NOTICE("which_filename(App)  ",[App,FileName,WorkerNode]),
 		   timer:sleep(5000),
 		   [{WorkerNode,FileName}|Acc]
 	   end,
