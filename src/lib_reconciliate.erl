@@ -126,7 +126,7 @@ applications_to_start([WantedApplicationFile|T],ActiveApplications,Acc)->
 %% @end
 %%--------------------------------------------------------------------
 wanted_applications()->
-    {ok,FileNames}=rd:call(deployment,all_filenames,[],3*5000),
+    {ok,FileNames}=deployment:all_filenames(),
     get_wanted_applications(FileNames).
 
 get_wanted_applications(FileNames)->
@@ -135,7 +135,7 @@ get_wanted_applications(FileNames)->
 get_wanted_applications([],Acc)->
     Acc;
 get_wanted_applications([FileName|T],Acc)->
-    {ok,[Map]}=rd:call(deployment,read_file,[FileName],3*5000),
+    {ok,[Map]}=deployment:read_file(FileName),
     {ok,HostName}=net:gethostname(),
     R=[ApplicationFileName||{ApplicationFileName,WantedHostName}<-maps:get(deployments,Map),
 		      HostName==WantedHostName],
@@ -174,13 +174,13 @@ check_apps([{App,_,_}|T],WorkerNode,AllApps,Acc)->
 	       false->
 		   Acc;
 	       true ->
-		   {ok,FileName}=rd:call(catalog,which_filename,[App],3*5000),
+		   {ok,FileName}=catalog:which_filename(App),
 		   [{WorkerNode,FileName}|Acc]
 	   end,
     check_apps(T,WorkerNode,AllApps,NewAcc).
 				
 all_apps()->
-    {ok,FileNames}=rd:call(catalog,all_filenames,[],3*5000),
+    {ok,FileNames}=catalog:all_filenames(),
     all_apps(FileNames).
 all_apps(FileNames)->
     all_apps(FileNames,[]).		
@@ -189,7 +189,7 @@ all_apps([],Acc)->
 all_apps([FileName|T],Acc) ->
     NewAcc=case lists:member(FileName,?InfraApplicationFileNames) of
 	       false->
-		   {ok,[Map]}=rd:call(catalog,read_file,[FileName],3*5000),
+		   {ok,[Map]}=catalog:read_file(FileName),
 		   App=maps:get(app,Map),
 		   [App|Acc];
 	       true->
