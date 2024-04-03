@@ -35,6 +35,7 @@
 %% @end
 %%--------------------------------------------------------------------
 start()->
+    ?LOG_NOTICE("********************* ",["*************************************"]),
     timer:sleep(?ReconciliationInterval),
     ApplicationFileNamesToStart=applications_to_start(),
     start_applications(ApplicationFileNamesToStart),
