@@ -171,15 +171,7 @@ stop()-> gen_server:stop(?SERVER).
 	  ignore.
 
 init([]) ->
- 
-    file:del_dir_r(?MainLogDir),
-    ok=file:make_dir(?MainLogDir),
-    [NodeName,_HostName]=string:tokens(atom_to_list(node()),"@"),
-    NodeNodeLogDir=filename:join(?MainLogDir,NodeName),
-    ok=log:create_logger(NodeNodeLogDir,?LocalLogDir,?LogFile,?MaxNumFiles,?MaxNumBytes),
-  
-     
-    ?LOG_NOTICE("Server started ",[?MODULE]),
+    
     {ok, #state{
 	   
 	    
@@ -294,13 +286,10 @@ handle_info({nodedown,Node}, State) ->
 
 
 handle_info(timeout, State) ->
-%    io:format("timeout State ~p~n",[{State,?MODULE,?LINE}]),
-    io:format("not implemented ~p~n",[{"lib_controller:connect_to_other_hosts()",?MODULE,?LINE}]),
-   %% lib_controller:connect_to_other_hosts(),
-
-    ok=initial_trade_resources(),
-    spawn(fun()->lib_reconciliate:start() end),
     
+    initial_trade_resources(),
+    spawn(fun()->lib_reconciliate:start() end),
+    ?LOG_NOTICE("Server started ",[?MODULE]),
     {noreply, State};
 
 
