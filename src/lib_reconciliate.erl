@@ -175,6 +175,7 @@ check_apps([{App,_,_}|T],WorkerNode,AllApps,Acc)->
 		   Acc;
 	       true ->
 		   {ok,FileName}=catalog:which_filename(App),
+		   ?LOG_NOTICE("which_filename(App)  ",[App,FileName]),
 		   [{WorkerNode,FileName}|Acc]
 	   end,
     check_apps(T,WorkerNode,AllApps,NewAcc).
