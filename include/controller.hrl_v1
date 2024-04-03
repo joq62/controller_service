@@ -11,4 +11,8 @@
 -define(MaxNumBytes,100000).
 
 -define(InfraApplicationFileNames,
-	["main.application"]).
+	["catalog.application",
+	 "controller.application",
+	 "deployment.application",
+	 "log.application",
+	 "resource_discovery.application"]).
