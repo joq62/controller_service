@@ -207,9 +207,11 @@ handle_call({load_start,ApplicationFileName}, _From, State) ->
 	   end,
     Reply=case Result of
 	      {ok,DeploymentInfo}->
-		   {ok,DeploymentInfo};
+		  WorkerNode=maps:get(node,DeploymentInfo),
+		  ?LOG_NOTICE("Application started on node",[ApplicationFileName,WorkerNode]),
+		  {ok,DeploymentInfo};
 	      ErrorEvent->
-		  io:format("ErrorEvent ~p~n",[{ErrorEvent,?MODULE,?LINE}]),
+		  ?LOG_WARNING("Failed to start Application",[ApplicationFileName,ErrorEvent]),
 		  ErrorEvent
 	  end,
     {reply, Reply, State};
@@ -227,9 +229,10 @@ handle_call({stop_unload,ApplicationFileName}, _From, State) ->
 	   end,
     Reply=case Result of
 	      ok->
+		  ?LOG_NOTICE("Application stopped",[ApplicationFileName]),
 		  ok;
 	      ErrorEvent->
-		  io:format("ErrorEvent ~p~n",[{ErrorEvent,?MODULE,?LINE}]),
+		  ?LOG_WARNING("Failed to stop  Application",[ApplicationFileName,ErrorEvent]),
 		  ErrorEvent
 	  end,
     {reply, Reply, State};
