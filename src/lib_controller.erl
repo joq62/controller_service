@@ -49,7 +49,7 @@ load_start(ApplicationFileName)->
     %% Load and start ApplicationId and start as permanent so if it crashes the node crashes
     [rpc:call(WorkerNode,code,add_patha,[Path],5000)||Path<-ApplicationIdPaths],
     ok=rpc:call(WorkerNode,application,load,[ApplicationIdApp],5000),
-    ok=rpc:call(WorkerNode,application,start,[ApplicationIdApp,permanent],5000),
+    ok=rpc:call(WorkerNode,application,start,[ApplicationIdApp,permanent],60*1000),
     pong=rpc:call(WorkerNode,ApplicationIdApp,ping,[],5000),
     pong=rpc:call(WorkerNode,log,ping,[],5000),
     pong=rpc:call(WorkerNode,rd,ping,[],5000),
