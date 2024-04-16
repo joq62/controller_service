@@ -115,7 +115,7 @@ eunit:
 	erlc -I include -I /home/joq62/erlang/include -o test_ebin test/*.erl;
 	erlc -I include\
 	 -I /home/joq62/erlang/include\
-	 -I ..//log_service/include\
+	 -I ../log_service/include\
 	 -o test_ebin ../log_service/src/*.erl;
 	erlc -I include\
 	 -I /home/joq62/erlang/include\

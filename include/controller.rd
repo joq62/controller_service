@@ -2,4 +2,4 @@
 -define(LocalResourceTuples,[{controller,{controller,node()}}]).
 
 %% I want following resource types
--define(TargetTypes,[catalog,host,deployment]). 
+-define(TargetTypes,[log2,catalog,host,deployment]). 
