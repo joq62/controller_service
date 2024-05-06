@@ -48,12 +48,14 @@ start()->
 start_applications([])->
     ok;
 start_applications([ApplicationFileName|T])->
-    case rpc:call(node(),lib_controller,load_start,[ApplicationFileName],3*5000) of
+    case rpc:call(node(),lib_controller,load_start,[ApplicationFileName],6*10000) of
 	{ok,DeploymentInfo}->
 	    WorkerNode=maps:get(node,DeploymentInfo),
+	    ?LOG2_NOTICE("Application started on node",[ApplicationFileName,WorkerNode]),
 	    ?LOG_NOTICE("Application started on node",[ApplicationFileName,WorkerNode]),
 	    ok;
 	ErrorEvent->
+	    ?LOG2_WARNING("Failed to start Application",[ApplicationFileName,ErrorEvent]),
 	    ?LOG_WARNING("Failed to start Application",[ApplicationFileName,ErrorEvent])
     end,
     timer:sleep(1000),
@@ -63,6 +65,7 @@ stop_applications([])->
     ok;
 stop_applications([{WorkerNode,ApplicationFileName}|T])->
     lib_controller:stop_unload(WorkerNode,ApplicationFileName),
+    ?LOG2_NOTICE("Application stopped",[ApplicationFileName]),
     ?LOG_NOTICE("Application stopped",[ApplicationFileName]),
     timer:sleep(1000),
     stop_applications(T).

@@ -79,18 +79,21 @@ setup()->
     [NodeName,_HostName]=string:tokens(atom_to_list(node()),"@"),
     NodeNodeLogDir=filename:join(?MainLogDir,NodeName),
     ok=log:create_logger(NodeNodeLogDir,?LocalLogDir,?LogFile,?MaxNumFiles,?MaxNumBytes),
-    
-    {ok,_}=rd:start_link(),
-    {ok,_}=git_handler:start_link(),
-    {ok,_}=catalog:start_link(),
-    {ok,_}=deployment:start_link(),
-    {ok,_}=controller:start_link(),
-  
     pong=log:ping(),
+    {ok,_}=rd:start_link(),
     pong=rd:ping(),
+    {ok,_}=log2:start_link(),
+    pong=log2:ping(),
+    spawn(fun()->print_loop(na) end),
+    {ok,_}=git_handler:start_link(),
     pong=git_handler:ping(),
+    {ok,_}=catalog:start_link(),
     pong=catalog:ping(),
+    {ok,_}=deployment:start_link(),
     pong=deployment:ping(),
+    {ok,_}=controller:start_link(),
+ 
+
     pong=controller:ping(),
     
    
@@ -98,4 +101,27 @@ setup()->
     [rd:add_target_resource_type(TargetType)||TargetType<-[log,rd,catalog,deployment,adder,divi]],
     rd:trade_resources(),
     timer:sleep(3000),
+
+
     ok.
+
+
+print_loop(LatestMap)->
+%    io:format("LatestMap ~p~n",[{LatestMap,?MODULE,?LINE,?FUNCTION_NAME}]),
+    case lib_db_log2:read_all_latest(1) of
+       []->
+	   NewLatest=LatestMap;
+       [Map]->
+	   if 
+	       Map/=LatestMap->
+		   {Info,Data}=log2:format(Map),
+		   io:format(Info,Data),
+		   io:format("~n"),
+		   NewLatest=Map;
+	       true ->
+		   NewLatest=LatestMap
+	   end
+   end,
+    timer:sleep(1000),
+    print_loop(NewLatest).
+    
