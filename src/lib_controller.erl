@@ -50,9 +50,9 @@ load_start(ApplicationFileName)->
     [rpc:call(WorkerNode,code,add_patha,[Path],5000)||Path<-ApplicationIdPaths],
     ok=rpc:call(WorkerNode,application,load,[ApplicationIdApp],5000),
     ok=rpc:call(WorkerNode,application,start,[ApplicationIdApp,permanent],60*1000),
-    pong=rpc:call(WorkerNode,ApplicationIdApp,ping,[],5000),
-    pong=rpc:call(WorkerNode,log,ping,[],5000),
-    pong=rpc:call(WorkerNode,rd,ping,[],5000),
+    pong=rpc:call(WorkerNode,ApplicationIdApp,ping,[],5*5000),
+    pong=rpc:call(WorkerNode,log,ping,[],3*5000),
+    pong=rpc:call(WorkerNode,rd,ping,[],3*5000),
     pong=net_adm:ping(WorkerNode),
     NodeId=maps:get(id,WorkerInfo),
     DeploymentInfo=#{
