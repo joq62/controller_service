@@ -42,7 +42,8 @@ start()->
     ApplicationFileNamesToStop=applications_to_stop(),
     stop_applications(ApplicationFileNamesToStop),
   %  io:format(" END Reconcilaition ========================== ~p~n",[{?MODULE,?FUNCTION_NAME,?LINE}]),
-    rpc:cast(node(),controller,reconciliate,[]).
+  %  rpc:cast(node(),controller,reconciliate,[])
+    rpc:cast(node(),controller,reconciliate,[ApplicationFileNamesToStart,ApplicationFileNamesToStop]).
    
 
 start_applications([])->

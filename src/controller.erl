@@ -27,6 +27,7 @@
 %% API
 -export([
 	 reconciliate/0,
+	 reconciliate/2,
 	 load_start/1,
 	 stop_unload/1,
 	 
@@ -64,6 +65,18 @@
 %%%===================================================================
 %%% API
 %%%===================================================================
+%%--------------------------------------------------------------------
+%% @doc
+%% This a loop that starts after the interval ReconcilationInterval 
+%% The loop checks what to start or stop 
+%% 
+%% @end
+%%--------------------------------------------------------------------
+-spec reconciliate(ApplicationFileNamesToStart::term(),ApplicationFileNamesToStop::term()) -> 
+	  ok .
+reconciliate(ApplicationFileNamesToStart,ApplicationFileNamesToStop) ->
+    gen_server:cast(?SERVER,{reconciliate,ApplicationFileNamesToStart,ApplicationFileNamesToStop}).
+
 %%--------------------------------------------------------------------
 %% @doc
 %% This a loop that starts after the interval ReconcilationInterval 
@@ -262,6 +275,12 @@ handle_call(UnMatchedSignal, From, State) ->
 %% @end
 %%--------------------------------------------------------------------
 
+
+handle_cast({reconciliate,ApplicationFileNamesToStart,ApplicationFileNamesToStop}, State) ->
+    ?LOG2_NOTICE("ApplicationFileNamesToStart",[ApplicationFileNamesToStart]),
+    ?LOG2_NOTICE("ApplicationFileNamesToStop",[ApplicationFileNamesToStop]),
+    spawn(fun()->lib_reconciliate:start() end),
+    {noreply, State};
 
 handle_cast({reconciliate}, State) ->
     spawn(fun()->lib_reconciliate:start() end),
