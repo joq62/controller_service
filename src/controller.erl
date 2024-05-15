@@ -281,13 +281,15 @@ handle_cast({reconciliate,ApplicationFileNamesToStart,ApplicationFileNamesToStop
 	[]->
 	    ok;
 	_->
-	    ?LOG2_NOTICE("ApplicationFileNamesToStart",[ApplicationFileNamesToStart])
+	    ok
+	   % ?LOG2_NOTICE("ApplicationFileNamesToStart",[ApplicationFileNamesToStart])
     end,
     case ApplicationFileNamesToStop of
 	[]->
 	    ok;
 	_->
-	    ?LOG2_NOTICE("ApplicationFileNamesToStop",[ApplicationFileNamesToStop])
+	    ok
+	   % ?LOG2_NOTICE("ApplicationFileNamesToStop",[ApplicationFileNamesToStop])
     end,
     spawn(fun()->lib_reconciliate:start() end),
     {noreply, State};
